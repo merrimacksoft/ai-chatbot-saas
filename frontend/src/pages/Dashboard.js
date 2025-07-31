@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const getAuthHeader = () => ({
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
 });
+
 
 const Dashboard = ({ user, onLogout }) => {
   const [documents, setDocuments] = useState([]);
@@ -23,7 +25,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const loadDocuments = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/documents', getAuthHeader());
+      const response = await axios.get(`${API_URL}/api/documents`, getAuthHeader());
       setDocuments(response.data.documents);
     } catch (error) {
       console.error('Error loading documents:', error);
@@ -63,7 +65,7 @@ const Dashboard = ({ user, onLogout }) => {
     formData.append('document', file);
 
     try {
-      await axios.post('http://localhost:5000/api/documents/upload', formData, {
+      await axios.post(`${API_URL}/api/documents/upload`, formData, {
         ...getAuthHeader(),
         headers: { 
           ...getAuthHeader().headers,
@@ -100,7 +102,7 @@ const Dashboard = ({ user, onLogout }) => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/documents/${docId}`, getAuthHeader());
+      await axios.delete(`${API_URL}/api/documents/${docId}`, getAuthHeader());
       loadDocuments();
       
       // Show success message
@@ -150,7 +152,7 @@ const Dashboard = ({ user, onLogout }) => {
     setChatLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chat', 
+      const response = await axios.post(`${API_URL}/api/chat`, 
         { question: chatMessage }, 
         getAuthHeader()
       );
